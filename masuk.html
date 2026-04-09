@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parkir - Kendaraan Masuk</title>
+    <meta name="theme-color" content="#03754c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -103,7 +107,6 @@
 
         function prosesMasuk() {
             const apiUrl = localStorage.getItem('parkir_apiUrl');
-            // Pastikan bersih dari spasi ekstra di awal/akhir
             const platNomor = document.getElementById('platNomor').value.replace(/\s+/g, '').toUpperCase();
             const btnMasuk = document.getElementById('btnMasuk');
 
@@ -165,6 +168,15 @@
             box.innerText = pesan;
             box.className = tipe;
             box.style.display = 'block';
+        }
+
+        // Pendaftaran Service Worker PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW terdaftar'))
+                    .catch(err => console.log('SW gagal', err));
+            });
         }
     </script>
 </body>

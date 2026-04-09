@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parkir - Kendaraan Keluar</title>
+    <meta name="theme-color" content="#03754c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
@@ -54,10 +58,8 @@
         #qrisArea { display: none; text-align: center; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #c8e6c9;}
         #qrisImage { max-width: 200px; width: 100%; border-radius: 8px; margin-top: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
 
-        /* Kamera Scanner Area */
         #scannerArea { display: none; width: 100%; margin-bottom: 15px; border-radius: 8px; overflow: hidden; border: 2px solid var(--primary); }
 
-        /* Area Terima Kasih */
         #terimaKasihArea { display: none; text-align: center; padding: 30px 10px; }
         .tk-icon { font-size: 60px; margin-bottom: 10px; }
         .tk-text { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
@@ -144,9 +146,8 @@
         let fotoKeluarBase64 = "";
         let globalUrlFotoMasuk = ""; 
         let metodePembayaran = "CASH"; 
-        let html5QrCode; // Variabel Scanner
+        let html5QrCode; 
 
-        // FUNGSI SCANNER QR
         function mulaiScanner() {
             const scannerArea = document.getElementById('scannerArea');
             const btnMulaiScan = document.getElementById('btnMulaiScan');
@@ -156,18 +157,15 @@
 
             html5QrCode = new Html5Qrcode("scannerArea");
             html5QrCode.start(
-                { facingMode: "environment" }, // Pakai kamera belakang
+                { facingMode: "environment" }, 
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText, decodedResult) => {
-                    // Berhasil scan!
                     tutupScanner();
                     document.getElementById('platNomor').value = decodedText;
                     tampilkanStatus("✅ Karcis terdeteksi!", "success");
-                    // Auto klik cari
                     setTimeout(() => { cariKendaraan(); }, 500); 
                 },
                 (errorMessage) => {
-                    // Abaikan error background (karena terus mencari)
                 }
             ).catch((err) => {
                 tampilkanStatus('❌ Kamera diblokir. Izinkan akses kamera di browser Anda.', 'error');
@@ -408,7 +406,6 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // LOGIKA UCAPAN TERIMA KASIH MUNCUL
                     document.getElementById('ringkasanTagihan').style.display = 'none';
                     document.getElementById('headerNormal').style.display = 'none';
                     document.getElementById('navBawah').style.display = 'none';
@@ -416,7 +413,6 @@
                     
                     document.getElementById('terimaKasihArea').style.display = 'block';
                     
-                    // Kembalikan ke awal setelah 4 detik
                     setTimeout(() => resetForm(), 4000); 
                 } else {
                     tampilkanStatus(`❌ Gagal: ${data.message}`, 'error');
@@ -430,7 +426,6 @@
         }
 
         function resetForm() {
-            // Tutup scanner kalau masih nyala
             tutupScanner();
 
             document.getElementById('terimaKasihArea').style.display = 'none';
@@ -461,6 +456,15 @@
             box.innerText = pesan;
             box.className = tipe;
             box.style.display = 'block';
+        }
+
+        // Pendaftaran Service Worker PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW terdaftar'))
+                    .catch(err => console.log('SW gagal', err));
+            });
         }
     </script>
 </body>

@@ -3,62 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parkir Pintar - Mulai</title>
+    <title>Lebah Parkir - Portal Masuk</title>
+    <meta name="theme-color" content="#ffb300">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #03754c;
-            --primary-hover: #025939;
-            --bg-color: #fefefe;
+            --primary: #ffb300; /* Kuning Lebah */
+            --primary-hover: #ffa000;
+            --bg-color: #f4f7f6;
             --text-dark: #333333;
             --border: #e0e0e0;
         }
 
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 450px; background: #fff; padding: 30px 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .container { width: 100%; max-width: 400px; background: #fff; padding: 40px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border); text-align: center; }
         
-        h1 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; font-size: 24px; }
-        p.subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 30px; }
+        .logo { font-size: 60px; margin-bottom: 5px; }
+        h1 { color: #333; margin-top: 0; margin-bottom: 5px; font-size: 26px; letter-spacing: -0.5px;}
+        p.subtitle { font-size: 14px; color: #666; margin-bottom: 35px; }
 
-        .step-box { background-color: #f9f9f9; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .step-box h3 { margin-top: 0; margin-bottom: 8px; font-size: 16px; color: var(--primary); }
-        .step-box p { margin: 0; font-size: 13px; line-height: 1.5; color: #555; }
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #555; text-align: center;}
         
-        .btn-copy { display: block; width: 100%; text-align: center; padding: 12px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 10px; font-size: 14px; }
-        .btn-copy:hover { background-color: #3367D6; }
+        input[type="text"] { width: 100%; padding: 15px; border: 2px solid var(--border); border-radius: 10px; font-size: 18px; text-align: center; font-weight: 600; text-transform: lowercase; transition: 0.3s; background-color: #fafafa;}
+        input[type="text"]:focus { border-color: var(--primary); outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.15);}
 
-        .btn-start { display: block; width: 100%; text-align: center; padding: 16px; background-color: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin-top: 30px; transition: 0.3s; box-shadow: 0 4px 10px rgba(3, 117, 76, 0.3); }
-        .btn-start:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        .btn-start { display: block; width: 100%; text-align: center; padding: 16px; background-color: #333; color: var(--primary); border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(51, 51, 51, 0.2); }
+        .btn-start:hover { background-color: #111; transform: translateY(-2px); }
 
-        .highlight { font-weight: 700; color: #333; }
+        #errorBox { display: none; color: #d32f2f; font-size: 13px; font-weight: 600; margin-top: 15px; background: #ffebee; padding: 10px; border-radius: 8px;}
+        
+        .footer-text { margin-top: 30px; font-size: 11px; color: #aaa; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Parkir Pintar 🅿️</h1>
-        <p class="subtitle">Aplikasi Kasir Parkir Tanpa Biaya Server</p>
+        <div class="logo">🐝</div>
+        <h1>Lebah Parkir</h1>
+        <p class="subtitle">Sistem Parkir Digital Terpadu</p>
 
-        <div class="step-box">
-            <h3>Langkah 1: Buat Database</h3>
-            <p>Klik tombol di bawah untuk menyalin Master Database ke akun Google milikmu sendiri.</p>
-            <a href="https://docs.google.com/spreadsheets/d/1V0RvPe6gNo2bludaWVm02-paztfZ4HTvO0u29rkGZ_Q/copy" target="_blank" class="btn-copy">📋 Salin Database ke Google</a>
+        <div class="form-group">
+            <label>Masukkan Kode Lokasi Parkir:</label>
+            <input type="text" id="kodeLokasi" placeholder="contoh: lembaga1" autocomplete="off" onkeydown="if(event.key === 'Enter') masukSistem()">
         </div>
 
-        <div class="step-box">
-            <h3>Langkah 2: Aktifkan Sistem</h3>
-            <p>Di Spreadsheet yang baru terbuka, klik menu <span class="highlight">Ekstensi > Apps Script</span>.</p>
-            <p style="margin-top: 8px;">Lalu di pojok kanan atas, klik <span class="highlight">Terapkan (Deploy) > Deployment Baru</span>. Pilih akses ke <span class="highlight">"Siapa Saja"</span> dan salin URL Web App yang muncul.</p>
+        <button class="btn-start" onclick="masukSistem()">MASUK KE SISTEM 🚀</button>
+        
+        <div id="errorBox"></div>
+        
+        <div class="footer-text">
+            &copy; 2024 Lebah Parkir System.<br>Dilarang menggunakan sistem tanpa izin.
         </div>
-
-        <div class="step-box">
-            <h3>Langkah 3: Hubungkan</h3>
-            <p>Masuk ke menu Pengaturan di aplikasi ini, dan tempelkan (paste) URL Web App yang tadi kamu dapatkan beserta tarif parkirmu.</p>
-        </div>
-
-        <a href="pengaturan.html" class="btn-start">MASUK KE PENGATURAN 🚀</a>
     </div>
 
+    <script>
+        function masukSistem() {
+            // Hilangkan spasi dan ubah ke huruf kecil
+            const kode = document.getElementById('kodeLokasi').value.trim().toLowerCase();
+            const errorBox = document.getElementById('errorBox');
+            
+            if (!kode) {
+                errorBox.innerText = '⚠️ Kode lokasi tidak boleh kosong!';
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            // Arahkan ke folder (Magic Folder) yang sesuai
+            // Jika mengetik 'lembaga1', akan diarahkan ke lebahparkir.fun/lembaga1
+            window.location.href = './' + kode;
+        }
+
+        // Pendaftaran Service Worker PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW terdaftar'))
+                    .catch(err => console.log('SW gagal', err));
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkir Pintar - Mulai</title>
+    <meta name="theme-color" content="#03754c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #03754c;
+            --primary-hover: #025939;
+            --bg-color: #fefefe;
+            --text-dark: #333333;
+            --border: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 450px; background: #fff; padding: 30px 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        
+        h1 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; font-size: 24px; }
+        p.subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 30px; }
+
+        .step-box { background-color: #f9f9f9; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .step-box h3 { margin-top: 0; margin-bottom: 8px; font-size: 16px; color: var(--primary); }
+        .step-box p { margin: 0; font-size: 13px; line-height: 1.5; color: #555; }
+        
+        .btn-copy { display: block; width: 100%; text-align: center; padding: 12px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 10px; font-size: 14px; }
+        .btn-copy:hover { background-color: #3367D6; }
+
+        .btn-start { display: block; width: 100%; text-align: center; padding: 16px; background-color: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin-top: 30px; transition: 0.3s; box-shadow: 0 4px 10px rgba(3, 117, 76, 0.3); }
+        .btn-start:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .highlight { font-weight: 700; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Parkir Pintar 🅿️</h1>
+        <p class="subtitle">Aplikasi Kasir Parkir Tanpa Biaya Server</p>
+
+        <div class="step-box">
+            <h3>Langkah 1: Buat Database</h3>
+            <p>Klik tombol di bawah untuk menyalin Master Database ke akun Google milikmu sendiri.</p>
+            <a href="https://docs.google.com/spreadsheets/d/1V0RvPe6gNo2bludaWVm02-paztfZ4HTvO0u29rkGZ_Q/copy" target="_blank" class="btn-copy">📋 Salin Database ke Google</a>
+        </div>
+
+        <div class="step-box">
+            <h3>Langkah 2: Aktifkan Sistem</h3>
+            <p>Di Spreadsheet yang baru terbuka, klik menu <span class="highlight">Ekstensi > Apps Script</span>.</p>
+            <p style="margin-top: 8px;">Lalu di pojok kanan atas, klik <span class="highlight">Terapkan (Deploy) > Deployment Baru</span>. Pilih akses ke <span class="highlight">"Siapa Saja"</span> dan salin URL Web App yang muncul.</p>
+        </div>
+
+        <div class="step-box">
+            <h3>Langkah 3: Hubungkan</h3>
+            <p>Masuk ke menu Pengaturan di aplikasi ini, dan tempelkan (paste) URL Web App yang tadi kamu dapatkan beserta tarif parkirmu.</p>
+        </div>
+
+        <a href="pengaturan.html" class="btn-start">MASUK KE PENGATURAN 🚀</a>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW terdaftar'))
+                    .catch(err => console.log('SW gagal', err));
+            });
+        }
+    </script>
+</body>
+</html>
