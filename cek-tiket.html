@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Karcis Parkir Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #03754c;
+            --primary-hover: #025939;
+            --bg-color: #f4f7f6;
+            --text-dark: #333333;
+            --border: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding-top: 50px; }
+        
+        .container { width: 100%; max-width: 400px; background: #fff; padding: 30px 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border); text-align: center; }
+        
+        .logo-area { font-size: 40px; margin-bottom: 10px; }
+        h2 { color: var(--primary); margin-top: 0; margin-bottom: 5px; font-size: 22px; }
+        p.subtitle { font-size: 13px; color: #666; margin-bottom: 25px; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        input[type="text"] { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 18px; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; text-align: center; }
+        input[type="text"]:focus { border-color: var(--primary); outline: none; }
+        
+        button { width: 100%; padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(3, 117, 76, 0.2); }
+        button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        button:disabled { background-color: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Area Hasil Karcis */
+        #karcisArea { display: none; margin-top: 25px; padding: 20px; background-color: #e8f5e9; border-radius: 12px; border: 2px dashed #81c784; text-align: left; }
+        .karcis-header { text-align: center; font-weight: 700; color: var(--primary); font-size: 18px; border-bottom: 1px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 15px; }
+        .karcis-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; border-bottom: 1px dashed #c8e6c9; padding-bottom: 5px; }
+        .karcis-val { font-weight: 700; color: #333; }
+        
+        .status-badge { display: inline-block; background-color: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; text-align: center; width: 100%; }
+
+        .preview-box { width: 100%; margin-top: 15px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none; }
+        
+        /* Area QR Code Pengendara */
+        .qr-area { text-align: center; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #a5d6a7; }
+        .qr-area img { width: 150px; height: 150px; border-radius: 8px; margin-top: 10px; padding: 5px; background: white; border: 1px solid var(--border); }
+        .qr-hint { font-size: 12px; font-weight: 600; color: #555; }
+
+        #statusBox { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 600; display: none; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+        
+        .footer-note { margin-top: 25px; font-size: 11px; color: #999; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo-area">🎫</div>
+        <h2>Karcis Parkir Digital</h2>
+        <p class="subtitle">Cek status parkir & dapatkan Barcode keluar</p>
+
+        <div class="form-group" id="areaPencarian">
+            <input type="text" id="platNomor" placeholder="PLAT NOMOR" autocomplete="off" oninput="this.value = this.value.toUpperCase().replace(/\s+/g, '')">
+        </div>
+
+        <button id="btnCari" onclick="cekKarcis()">CEK KENDARAAN SAYA</button>
+
+        <div id="statusBox"></div>
+
+        <div id="karcisArea">
+            <div class="karcis-header">BUKTI PARKIR RESMI</div>
+            
+            <div class="karcis-item">
+                <span>Plat Nomor:</span>
+                <span class="karcis-val" id="lblPlat">-</span>
+            </div>
+            <div class="karcis-item">
+                <span>Waktu Masuk:</span>
+                <span class="karcis-val" id="lblMasuk">-</span>
+            </div>
+            
+            <div class="status-badge">🟢 KENDARAAN SEDANG PARKIR</div>
+
+            <img id="fotoKendaraan" class="preview-box" alt="Foto Kendaraan">
+
+            <div class="qr-area">
+                <div class="qr-hint">Tunjukkan QR ini ke Petugas saat keluar</div>
+                <img id="qrKarcis" src="" alt="QR Code Karcis">
+            </div>
+        </div>
+        
+        <p class="footer-note">Pastikan kendaraan Anda terkunci ganda. Tunjukkan halaman ini kepada petugas saat keluar.</p>
+    </div>
+
+    <script>
+        const apiUrl = "https://script.google.com/macros/s/AKfycbyOAvMp80C5zsqoPe7dpnhGJZlHSmfNcNjJN6zxSB2RuF-wrpzPEi1NnQB99kJ3-AX5Qg/exec";
+
+        function cekKarcis() {
+            const platNomor = document.getElementById('platNomor').value.replace(/\s+/g, '').toUpperCase();
+            const btnCari = document.getElementById('btnCari');
+            
+            if (!platNomor) {
+                tampilkanStatus('Masukkan plat nomor Anda terlebih dahulu.', 'error');
+                return;
+            }
+
+            btnCari.disabled = true;
+            btnCari.innerText = "MENCARI DATA...";
+            tampilkanStatus('Mencari kendaraan Anda di sistem...', 'loading');
+
+            fetch(apiUrl, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'cari', platNomor: platNomor })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    tampilkanKarcis(data.data.platNomor, data.data.waktuMasuk, data.data.fotoMasuk);
+                } else {
+                    tampilkanStatus(`⚠️ Kendaraan tidak ditemukan di area parkir.`, 'error');
+                    document.getElementById('karcisArea').style.display = 'none';
+                    btnCari.disabled = false;
+                    btnCari.innerText = "CEK KENDARAAN SAYA";
+                }
+            })
+            .catch(err => {
+                tampilkanStatus('❌ Terjadi kesalahan jaringan. Cek koneksi internet Anda.', 'error');
+                btnCari.disabled = false;
+                btnCari.innerText = "CEK KENDARAAN SAYA";
+            });
+        }
+
+        function tampilkanKarcis(plat, waktuMasuk, urlFotoMasuk) {
+            document.getElementById('lblPlat').innerText = plat;
+            document.getElementById('lblMasuk').innerText = waktuMasuk;
+
+            // Generate QR Code otomatis dari Plat Nomor
+            document.getElementById('qrKarcis').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${plat}`;
+
+            const imgEl = document.getElementById('fotoKendaraan');
+            if (urlFotoMasuk && urlFotoMasuk !== "") {
+                let fileId = "";
+                const matchD = urlFotoMasuk.match(/\/d\/(.+?)\//);
+                const matchId = urlFotoMasuk.match(/id=([^&]+)/);
+                if (matchD && matchD[1]) fileId = matchD[1];
+                else if (matchId && matchId[1]) fileId = matchId[1];
+
+                if (fileId) imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w600`;
+                else imgEl.src = urlFotoMasuk; 
+                
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.style.display = 'none';
+            }
+
+            document.getElementById('statusBox').style.display = 'none';
+            document.getElementById('areaPencarian').style.display = 'none';
+            document.getElementById('btnCari').style.display = 'none';
+            document.getElementById('karcisArea').style.display = 'block';
+        }
+
+        function tampilkanStatus(pesan, tipe) {
+            const box = document.getElementById('statusBox');
+            box.innerText = pesan;
+            box.className = tipe;
+            box.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

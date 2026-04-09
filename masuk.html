@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkir - Kendaraan Masuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #03754c;
+            --primary-hover: #025939;
+            --bg-color: #fefefe;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --border: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 400px; background: #fff; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; transition: border-color 0.3s; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
+        input[type="text"]:focus { border-color: var(--primary); outline: none; }
+        
+        input[type="file"] { display: none; }
+        .btn-kamera { display: block; width: 100%; padding: 12px; background-color: #e0f2f1; color: var(--primary); border: 2px dashed var(--primary); border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-kamera:hover { background-color: #b2dfdb; }
+        #previewFoto { width: 100%; margin-top: 10px; border-radius: 8px; display: none; border: 1px solid var(--border); }
+
+        button { width: 100%; padding: 14px; background-color: var(--primary); color: var(--text-light); border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #9e9e9e; cursor: not-allowed; }
+
+        #statusBox { margin-top: 20px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 600; display: none; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+
+        .nav-menu { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .nav-menu a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; }
+        .nav-menu a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Catat Masuk 🚗</h2>
+
+        <div class="form-group">
+            <label for="platNomor">Plat Nomor Kendaraan:</label>
+            <input type="text" id="platNomor" placeholder="CONTOH: L1234XX" autocomplete="off" oninput="this.value = this.value.toUpperCase().replace(/\s+/g, '')">
+        </div>
+
+        <div class="form-group">
+            <label>Foto Bukti Masuk <span style="color:red;">*</span>:</label>
+            <label for="kameraMasuk" class="btn-kamera">📷 Ambil Foto Kendaraan</label>
+            <input type="file" accept="image/*" capture="environment" id="kameraMasuk" onchange="kompresGambar(event)">
+            <img id="previewFoto" alt="Preview Foto">
+        </div>
+
+        <button id="btnMasuk" onclick="prosesMasuk()">SIMPAN DATA MASUK</button>
+
+        <div id="statusBox"></div>
+
+        <div class="nav-menu">
+            <a href="pengaturan.html">⚙️ Pengaturan</a>
+            <a href="keluar.html">Catat Keluar ➡️</a>
+        </div>
+    </div>
+
+    <script>
+        let fotoBase64 = "";
+
+        function kompresGambar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; 
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    fotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    const preview = document.getElementById('previewFoto');
+                    preview.src = fotoBase64;
+                    preview.style.display = 'block';
+                }
+            }
+        }
+
+        function prosesMasuk() {
+            const apiUrl = localStorage.getItem('parkir_apiUrl');
+            // Pastikan bersih dari spasi ekstra di awal/akhir
+            const platNomor = document.getElementById('platNomor').value.replace(/\s+/g, '').toUpperCase();
+            const btnMasuk = document.getElementById('btnMasuk');
+
+            if (!apiUrl) {
+                tampilkanStatus('❌ URL API belum diatur! Silakan ke menu Pengaturan.', 'error');
+                return;
+            }
+            if (!platNomor) {
+                tampilkanStatus('❌ Plat nomor tidak boleh kosong!', 'error');
+                return;
+            }
+            if (!fotoBase64 || fotoBase64 === "") {
+                tampilkanStatus('❌ FOTO WAJIB DIAMBIL sebelum menyimpan!', 'error');
+                return;
+            }
+
+            btnMasuk.disabled = true;
+            btnMasuk.innerText = "MENYIMPAN...";
+            tampilkanStatus('Mengirim data dan mengupload foto...', 'loading');
+
+            const waktuSekarang = new Date().toLocaleString('id-ID');
+            
+            const payload = {
+                action: 'masuk',
+                platNomor: platNomor,
+                waktuMasuk: waktuSekarang,
+                fotoMasuk: fotoBase64 
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                redirect: 'follow', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('platNomor').value = '';
+                    document.getElementById('previewFoto').style.display = 'none';
+                    fotoBase64 = ""; 
+                    tampilkanStatus(`✅ Berhasil! Plat ${data.data.platNomor} masuk.`, 'success');
+                } else {
+                    tampilkanStatus(`❌ Gagal: ${data.message}`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tampilkanStatus('❌ Terjadi kesalahan jaringan. Cek koneksi internet.', 'error');
+            })
+            .finally(() => {
+                btnMasuk.disabled = false;
+                btnMasuk.innerText = "SIMPAN DATA MASUK";
+            });
+        }
+
+        function tampilkanStatus(pesan, tipe) {
+            const box = document.getElementById('statusBox');
+            box.innerText = pesan;
+            box.className = tipe;
+            box.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

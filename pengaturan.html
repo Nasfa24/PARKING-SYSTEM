@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkir - Pengaturan Sistem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #03754c;
+            --primary-hover: #025939;
+            --bg-color: #fefefe;
+            --text-dark: #333333;
+            --border: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 400px; background: #fff; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 5px; }
+        p.subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 25px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        
+        input[type="text"], input[type="number"], input[type="url"] { 
+            width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; transition: 0.3s; 
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="url"]:focus { border-color: var(--primary); outline: none; }
+        
+        .hint { font-size: 11px; color: #888; margin-top: 4px; display: block; }
+
+        button { width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px;}
+        button:hover { background-color: var(--primary-hover); }
+
+        .nav-menu { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .nav-menu a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; }
+        .nav-menu a:hover { text-decoration: underline; }
+
+        #statusBox { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 600; display: none; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Pengaturan ⚙️</h2>
+        <p class="subtitle">Data disimpan di perangkat ini (Lokal)</p>
+        
+        <div class="form-group">
+            <label>URL API Google Apps Script:</label>
+            <input type="text" id="setApiUrl" placeholder="https://script.google.com/macros/s/.../exec">
+            <span class="hint">URL dari GSheet milik petugas.</span>
+        </div>
+
+        <div class="form-group">
+            <label>Tarif 1 Jam Pertama (Rp):</label>
+            <input type="number" id="setTarifAwal" placeholder="Contoh: 2000">
+        </div>
+
+        <div class="form-group">
+            <label>Tarif Jam Berikutnya (Rp):</label>
+            <input type="number" id="setTarifLanjut" placeholder="Contoh: 1000">
+        </div>
+
+        <div class="form-group">
+            <label>URL Gambar QRIS (Opsional):</label>
+            <input type="url" id="setQrisUrl" placeholder="Contoh: https://i.ibb.co/XyZ123/qris.jpg">
+            <span class="hint">Upload foto QRIS ke <a href="https://imgbb.com/" target="_blank">ImgBB</a>, lalu paste link direct gambarnya di sini.</span>
+        </div>
+
+        <button onclick="simpanPengaturan()">SIMPAN PENGATURAN</button>
+
+        <div id="statusBox"></div>
+
+        <div class="nav-menu">
+            <a href="masuk.html">⬅️ Ke Halaman Masuk</a>
+            <a href="keluar.html">Ke Halaman Keluar ➡️</a>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            muatPengaturan();
+        };
+
+        function muatPengaturan() {
+            const savedUrl = localStorage.getItem('parkir_apiUrl') || '';
+            const savedTarifAwal = localStorage.getItem('parkir_tarifAwal') || '';
+            const savedTarifLanjut = localStorage.getItem('parkir_tarifLanjut') || '';
+            const savedQrisUrl = localStorage.getItem('parkir_qrisUrl') || '';
+
+            document.getElementById('setApiUrl').value = savedUrl;
+            document.getElementById('setTarifAwal').value = savedTarifAwal;
+            document.getElementById('setTarifLanjut').value = savedTarifLanjut;
+            document.getElementById('setQrisUrl').value = savedQrisUrl;
+        }
+
+        function simpanPengaturan() {
+            const apiUrl = document.getElementById('setApiUrl').value.trim();
+            const tarifAwal = document.getElementById('setTarifAwal').value.trim();
+            const tarifLanjut = document.getElementById('setTarifLanjut').value.trim();
+            const qrisUrl = document.getElementById('setQrisUrl').value.trim();
+
+            if (!apiUrl || !tarifAwal || !tarifLanjut) {
+                tampilkanStatus('❌ Kolom API dan Tarif wajib diisi!', 'error');
+                return;
+            }
+
+            localStorage.setItem('parkir_apiUrl', apiUrl);
+            localStorage.setItem('parkir_tarifAwal', tarifAwal);
+            localStorage.setItem('parkir_tarifLanjut', tarifLanjut);
+            localStorage.setItem('parkir_qrisUrl', qrisUrl);
+
+            tampilkanStatus('✅ Pengaturan berhasil disimpan!', 'success');
+        }
+
+        function tampilkanStatus(pesan, tipe) {
+            const box = document.getElementById('statusBox');
+            box.innerText = pesan;
+            box.className = tipe;
+            box.style.display = 'block';
+            
+            setTimeout(() => { box.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>
