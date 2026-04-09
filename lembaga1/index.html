@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktivasi Lebah Parkir</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #ffb300; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Poppins', sans-serif; text-align: center; }
+        .loader { border: 5px solid #fff; border-top: 5px solid #333; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .logo { font-size: 50px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="logo">🐝</div>
+        <div class="loader"></div>
+        <h2>Mengonfigurasi Sistem...</h2>
+        <p>Menyiapkan database aman untuk Lembaga 1</p>
+    </div>
+
+    <script>
+        // GANTI INI DENGAN URL API LEMBAGA 1 (Nanti kalau GSheet-nya sudah siap)
+        localStorage.setItem('parkir_apiUrl', 'https://script.google.com/macros/s/CONTOH_API_LEMBAGA_1/exec');
+        localStorage.setItem('parkir_tarifAwal', '2000');
+        localStorage.setItem('parkir_tarifLanjut', '1000');
+        localStorage.setItem('parkir_qrisUrl', 'https://i.ibb.co/CONTOH/qris.jpg');
+
+        // Lempar otomatis ke halaman masuk utama
+        setTimeout(() => {
+            window.location.href = '../masuk.html';
+        }, 1500); 
+    </script>
+</body>
+</html>
