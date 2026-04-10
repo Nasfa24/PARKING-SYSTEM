@@ -3,41 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lebah Parkir - Portal Masuk</title>
+    <title>Lebah Parkir - Login Petugas</title>
     <meta name="theme-color" content="#ffb300">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #ffb300; /* Kuning Lebah */
-            --primary-hover: #ffa000;
-            --bg-color: #f4f7f6;
-            --text-dark: #333333;
-            --border: #e0e0e0;
-        }
-
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 400px; background: #fff; padding: 40px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid var(--border); text-align: center; }
-        
-        .logo { font-size: 60px; margin-bottom: 5px; }
-        h1 { color: #333; margin-top: 0; margin-bottom: 5px; font-size: 26px; letter-spacing: -0.5px;}
-        p.subtitle { font-size: 14px; color: #666; margin-bottom: 35px; }
-
-        .form-group { margin-bottom: 25px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #555; text-align: center;}
-        
-        input[type="text"] { width: 100%; padding: 15px; border: 2px solid var(--border); border-radius: 10px; font-size: 18px; text-align: center; font-weight: 600; text-transform: lowercase; transition: 0.3s; background-color: #fafafa;}
-        input[type="text"]:focus { border-color: var(--primary); outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.15);}
-
-        .btn-start { display: block; width: 100%; text-align: center; padding: 16px; background-color: #333; color: var(--primary); border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(51, 51, 51, 0.2); }
-        .btn-start:hover { background-color: #111; transform: translateY(-2px); }
-
-        #errorBox { display: none; color: #d32f2f; font-size: 13px; font-weight: 600; margin-top: 15px; background: #ffebee; padding: 10px; border-radius: 8px;}
-        
-        .footer-text { margin-top: 30px; font-size: 11px; color: #aaa; }
+        body { background-color: #ffb300; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: 'Poppins', sans-serif; padding: 20px;}
+        .container { width: 100%; max-width: 350px; background: #fff; padding: 40px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .logo { font-size: 55px; margin-bottom: 5px; }
+        h1 { margin: 0 0 5px 0; font-size: 24px; color: #222; }
+        p { font-size: 13px; color: #666; margin-bottom: 25px; }
+        input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; text-align: center; font-weight: 600; box-sizing: border-box; }
+        input:focus { border-color: #ffb300; outline: none; }
+        button { width: 100%; padding: 15px; background-color: #333; color: #ffb300; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #111; }
+        button:disabled { background-color: #888; color: #ccc; cursor: not-allowed; }
+        #statusBox { margin-top: 15px; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; display: none; }
+        .error { background-color: #ffebee; color: #d32f2f; }
+        .success { background-color: #e8f5e9; color: #2e7d32; }
     </style>
 </head>
 <body>
@@ -45,45 +29,72 @@
     <div class="container">
         <div class="logo">🐝</div>
         <h1>Lebah Parkir</h1>
-        <p class="subtitle">Sistem Parkir Digital Terpadu</p>
+        <p>Login Petugas Operasional</p>
 
-        <div class="form-group">
-            <label>Masukkan Kode Lokasi Parkir:</label>
-            <input type="text" id="kodeLokasi" placeholder="contoh: lembaga1" autocomplete="off" onkeydown="if(event.key === 'Enter') masukSistem()">
-        </div>
-
-        <button class="btn-start" onclick="masukSistem()">MASUK KE SISTEM 🚀</button>
+        <input type="text" id="username" placeholder="Username (misal: mitrasehat)" autocomplete="off" oninput="this.value = this.value.toLowerCase().replace(/\s+/g, '')">
+        <input type="password" id="pin" placeholder="PIN Rahasia (4 Angka)" maxlength="4" autocomplete="off" onkeydown="if(event.key === 'Enter') prosesLogin()">
         
-        <div id="errorBox"></div>
-        
-        <div class="footer-text">
-            &copy; 2024 Lebah Parkir System.<br>Dilarang menggunakan sistem tanpa izin.
-        </div>
+        <button id="btnLogin" onclick="prosesLogin()">MASUK SISTEM 🚀</button>
+        <div id="statusBox"></div>
     </div>
 
     <script>
-        function masukSistem() {
-            // Hilangkan spasi dan ubah ke huruf kecil
-            const kode = document.getElementById('kodeLokasi').value.trim().toLowerCase();
-            const errorBox = document.getElementById('errorBox');
-            
-            if (!kode) {
-                errorBox.innerText = '⚠️ Kode lokasi tidak boleh kosong!';
-                errorBox.style.display = 'block';
-                return;
-            }
+        // API SUPER ADMIN MILIK MAS UUTH
+        const MASTER_API = "https://script.google.com/macros/s/AKfycbyb-nr_xGdIbsRvSzX4IAYNm4EqRP_ewIqszUINxWsGCTwGwGfg-TuQB5TJBuh63eE9/exec";
 
-            // Arahkan ke folder (Magic Folder) yang sesuai
-            // Jika mengetik 'lembaga1', akan diarahkan ke lebahparkir.fun/lembaga1
-            window.location.href = './' + kode;
+        function prosesLogin() {
+            const user = document.getElementById('username').value;
+            const pin = document.getElementById('pin').value;
+            const btn = document.getElementById('btnLogin');
+
+            if (!user || !pin) { tampilkanPesan('Isi Username dan PIN!', 'error'); return; }
+
+            btn.disabled = true;
+            btn.innerText = "MEMVERIFIKASI...";
+            document.getElementById('statusBox').style.display = 'none';
+
+            fetch(MASTER_API, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', username: user, pin: pin })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Tanam Data dari GSheet Super Admin ke HP Petugas
+                    const d = data.data;
+                    localStorage.setItem('parkir_apiUrl', d.apiUrl);
+                    localStorage.setItem('parkir_tmAwal', d.tmAwal);
+                    localStorage.setItem('parkir_tmLanjut', d.tmLanjut);
+                    localStorage.setItem('parkir_tbAwal', d.tbAwal);
+                    localStorage.setItem('parkir_tbLanjut', d.tbLanjut);
+                    localStorage.setItem('parkir_qrisUrl', d.qrisUrl);
+
+                    tampilkanPesan('Berhasil login! Menyiapkan aplikasi...', 'success');
+                    btn.innerText = "MEMUAT...";
+                    setTimeout(() => { window.location.href = 'masuk.html'; }, 1000);
+                } else {
+                    tampilkanPesan(data.message, 'error');
+                    btn.disabled = false;
+                    btn.innerText = "MASUK SISTEM 🚀";
+                }
+            })
+            .catch(err => {
+                tampilkanPesan('Gagal terhubung ke server utama.', 'error');
+                btn.disabled = false;
+                btn.innerText = "MASUK SISTEM 🚀";
+            });
         }
 
-        // Pendaftaran Service Worker PWA
+        function tampilkanPesan(pesan, tipe) {
+            const box = document.getElementById('statusBox');
+            box.innerText = pesan; box.className = tipe; box.style.display = 'block';
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('SW terdaftar'))
-                    .catch(err => console.log('SW gagal', err));
+                navigator.serviceWorker.register('sw.js');
             });
         }
     </script>

@@ -15,7 +15,6 @@
             --primary-hover: #025939;
             --bg-color: #fefefe;
             --text-dark: #333333;
-            --text-light: #ffffff;
             --border: #e0e0e0;
         }
 
@@ -28,12 +27,18 @@
         input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; transition: border-color 0.3s; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
         input[type="text"]:focus { border-color: var(--primary); outline: none; }
         
+        /* Tombol Motor/Mobil */
+        .radio-group { display: flex; gap: 10px; }
+        .radio-label { flex: 1; background: #f4f7f6; padding: 12px; border-radius: 8px; text-align: center; border: 2px solid var(--border); cursor: pointer; font-weight: 600; transition: 0.3s;}
+        .radio-label:has(input:checked) { background: #e8f5e9; border-color: var(--primary); color: var(--primary); }
+        .radio-label input { display: none; }
+
         input[type="file"] { display: none; }
         .btn-kamera { display: block; width: 100%; padding: 12px; background-color: #e0f2f1; color: var(--primary); border: 2px dashed var(--primary); border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .btn-kamera:hover { background-color: #b2dfdb; }
         #previewFoto { width: 100%; margin-top: 10px; border-radius: 8px; display: none; border: 1px solid var(--border); }
 
-        button { width: 100%; padding: 14px; background-color: var(--primary); color: var(--text-light); border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
+        button { width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
         button:hover { background-color: var(--primary-hover); }
         button:disabled { background-color: #9e9e9e; cursor: not-allowed; }
 
@@ -58,6 +63,18 @@
         </div>
 
         <div class="form-group">
+            <label>Jenis Kendaraan:</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="jenisK" value="Motor" checked> 🏍️ Motor
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="jenisK" value="Mobil"> 🚗 Mobil
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label>Foto Bukti Masuk <span style="color:red;">*</span>:</label>
             <label for="kameraMasuk" class="btn-kamera">📷 Ambil Foto Kendaraan</label>
             <input type="file" accept="image/*" capture="environment" id="kameraMasuk" onchange="kompresGambar(event)">
@@ -69,13 +86,20 @@
         <div id="statusBox"></div>
 
         <div class="nav-menu">
-            <a href="pengaturan.html">⚙️ Pengaturan</a>
             <a href="keluar.html">Catat Keluar ➡️</a>
+            <a href="#" onclick="logout()" style="color: #d32f2f;">🚪 Keluar Akun</a>
         </div>
     </div>
 
     <script>
         let fotoBase64 = "";
+
+        // Pengecekan Login
+        window.onload = function() {
+            if (!localStorage.getItem('parkir_apiUrl')) {
+                window.location.href = 'index.html';
+            }
+        };
 
         function kompresGambar(event) {
             const file = event.target.files[0];
@@ -108,20 +132,11 @@
         function prosesMasuk() {
             const apiUrl = localStorage.getItem('parkir_apiUrl');
             const platNomor = document.getElementById('platNomor').value.replace(/\s+/g, '').toUpperCase();
+            const jenisKendaraan = document.querySelector('input[name="jenisK"]:checked').value;
             const btnMasuk = document.getElementById('btnMasuk');
 
-            if (!apiUrl) {
-                tampilkanStatus('❌ URL API belum diatur! Silakan ke menu Pengaturan.', 'error');
-                return;
-            }
-            if (!platNomor) {
-                tampilkanStatus('❌ Plat nomor tidak boleh kosong!', 'error');
-                return;
-            }
-            if (!fotoBase64 || fotoBase64 === "") {
-                tampilkanStatus('❌ FOTO WAJIB DIAMBIL sebelum menyimpan!', 'error');
-                return;
-            }
+            if (!platNomor) { tampilkanStatus('❌ Plat nomor tidak boleh kosong!', 'error'); return; }
+            if (!fotoBase64 || fotoBase64 === "") { tampilkanStatus('❌ FOTO WAJIB DIAMBIL sebelum menyimpan!', 'error'); return; }
 
             btnMasuk.disabled = true;
             btnMasuk.innerText = "MENYIMPAN...";
@@ -132,6 +147,7 @@
             const payload = {
                 action: 'masuk',
                 platNomor: platNomor,
+                jenis: jenisKendaraan, // Mengirim jenis kendaraan ke GSheet Klien
                 waktuMasuk: waktuSekarang,
                 fotoMasuk: fotoBase64 
             };
@@ -154,7 +170,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 tampilkanStatus('❌ Terjadi kesalahan jaringan. Cek koneksi internet.', 'error');
             })
             .finally(() => {
@@ -165,18 +180,12 @@
 
         function tampilkanStatus(pesan, tipe) {
             const box = document.getElementById('statusBox');
-            box.innerText = pesan;
-            box.className = tipe;
-            box.style.display = 'block';
+            box.innerText = pesan; box.className = tipe; box.style.display = 'block';
         }
 
-        // Pendaftaran Service Worker PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('SW terdaftar'))
-                    .catch(err => console.log('SW gagal', err));
-            });
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
         }
     </script>
 </body>
