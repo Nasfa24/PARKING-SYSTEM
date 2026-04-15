@@ -22,26 +22,32 @@
         * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 400px; background: #fff; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-        h2 { text-align: center; color: var(--primary); margin-top: 0; margin-bottom: 25px; }
+        
+        /* UI TAB NAVIGASI BARU */
+        .tab-menu { display: flex; gap: 5px; background: #f4f7f6; border-radius: 12px; margin-bottom: 25px; padding: 5px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; text-decoration: none; font-weight: 700; font-size: 15px; color: #666; border-radius: 8px; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(3, 117, 76, 0.2); pointer-events: none;}
+        .tab-btn:not(.active):hover { background: #e8e8e8; }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
-        input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
+        input[type="text"] { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 18px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; text-align: center;}
         input[type="text"]:focus { border-color: var(--primary); outline: none; }
         
-        button { width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-bottom: 10px;}
+        button { width: 100%; padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px;}
         button:hover { background-color: var(--primary-hover); }
         button:disabled { background-color: #9e9e9e; cursor: not-allowed; }
         
         .btn-secondary { background-color: #f44336; }
         .btn-secondary:hover { background-color: #d32f2f; }
-        .btn-scan { background-color: #ff9800; }
+        .btn-scan { background-color: #ff9800; font-size: 15px;}
         .btn-scan:hover { background-color: #f57c00; }
 
         .btn-info { background-color: #00acc1; color: white; display: block; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 14px; margin-bottom: 15px; font-weight: 600; transition: 0.3s; border: 2px solid #00838f;}
         .btn-info:hover { background-color: #00838f; }
 
         input[type="file"] { display: none; }
-        .btn-kamera { display: block; width: 100%; padding: 12px; background-color: #e0f2f1; color: var(--primary); border: 2px dashed var(--primary); border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 15px; margin-bottom: 5px;}
+        .btn-kamera { display: block; width: 100%; padding: 12px; background-color: #e0f2f1; color: var(--primary); border: 2px dashed var(--primary); border-radius: 8px; text-align: center; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 15px; margin-bottom: 5px;}
         .btn-kamera:hover { background-color: #b2dfdb; }
         
         .preview-box { width: 100%; margin-top: 5px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border); display: none; }
@@ -57,7 +63,6 @@
         
         #qrisArea { display: none; text-align: center; margin-bottom: 15px; padding-top: 10px; border-top: 1px solid #c8e6c9;}
         #qrisImage { max-width: 200px; width: 100%; border-radius: 8px; margin-top: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-
         #scannerArea { display: none; width: 100%; margin-bottom: 15px; border-radius: 8px; overflow: hidden; border: 2px solid var(--primary); }
 
         #terimaKasihArea { display: none; text-align: center; padding: 30px 10px; }
@@ -65,21 +70,23 @@
         .tk-text { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
         .tk-sub { font-size: 14px; color: #666; }
 
+        /* UI TOMBOL LOGOUT BARU */
+        .btn-logout { display: block; width: 100%; text-align: center; padding: 14px; margin-top: 25px; border: 2px solid #ffcdd2; color: #d32f2f; border-radius: 8px; font-weight: 700; text-decoration: none; background: #fff; transition: 0.3s; }
+        .btn-logout:hover { background: #ffebee; border-color: #ef5350; }
+
         #statusBox { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 600; display: none; }
         .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .loading { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
-
-        .nav-menu { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .nav-menu a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; }
-        .nav-menu a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div id="headerNormal">
-            <h2>Catat Keluar 🏁</h2>
+        
+        <div id="headerNormal" class="tab-menu">
+            <a href="masuk.html" class="tab-btn">🚗 MASUK</a>
+            <a href="keluar.html" class="tab-btn active">🏁 KELUAR</a>
         </div>
 
         <div id="terimaKasihArea">
@@ -90,12 +97,12 @@
 
         <div id="areaPencarian">
             <div class="form-group">
-                <label>Pilih Cara Cari Kendaraan:</label>
+                <label style="text-align: center; margin-bottom:15px;">Pilih Cara Cari Kendaraan:</label>
                 
                 <div id="scannerArea"></div>
                 <button id="btnMulaiScan" class="btn-scan" onclick="mulaiScanner()">📱 SCAN KARCIS PENGENDARA</button>
                 
-                <div style="text-align: center; margin: 15px 0; font-size: 12px; color: #888; font-weight: 600;">ATAU KETIK MANUAL</div>
+                <div style="text-align: center; margin: 20px 0; font-size: 12px; color: #999; font-weight: 700;">ATAU KETIK MANUAL</div>
 
                 <input type="text" id="platNomor" placeholder="CONTOH: L1234XX" autocomplete="off" oninput="this.value = this.value.toUpperCase().replace(/\s+/g, '')">
                 <button id="btnCari" onclick="cariKendaraan()" style="margin-top: 10px;">🔍 CARI PLAT NOMOR</button>
@@ -126,7 +133,7 @@
                 <img id="qrisImage" src="" alt="QRIS Petugas">
             </div>
 
-            <label for="kameraKeluar" class="btn-kamera">📷 Ambil Foto Keluar <span style="color:red;">*</span></label>
+            <label for="kameraKeluar" class="btn-kamera">📷 AMBIL FOTO KELUAR <span style="color:red;">*</span></label>
             <input type="file" accept="image/*" capture="environment" id="kameraKeluar" onchange="kompresGambar(event)">
             <img id="previewFotoKeluar" class="preview-box" alt="Preview Foto Keluar">
 
@@ -136,9 +143,8 @@
 
         <div id="statusBox"></div>
 
-        <div class="nav-menu" id="navBawah">
-            <a href="masuk.html">⬅️ Catat Masuk</a>
-            <a href="#" onclick="logout()" style="color: #d32f2f;">🚪 Keluar Akun</a>
+        <div id="navBawah">
+            <a href="#" onclick="logout()" class="btn-logout">🚪 Keluar Akun</a>
         </div>
     </div>
 
@@ -171,7 +177,7 @@
                 },
                 (errorMessage) => {}
             ).catch((err) => {
-                tampilkanStatus('❌ Kamera diblokir. Izinkan akses kamera di browser Anda.', 'error');
+                tampilkanStatus('❌ Kamera diblokir. Izinkan akses kamera.', 'error');
                 tutupScanner();
             });
         }
@@ -378,8 +384,8 @@
         function resetForm() {
             tutupScanner();
             document.getElementById('terimaKasihArea').style.display = 'none';
-            document.getElementById('headerNormal').style.display = 'block';
-            document.getElementById('navBawah').style.display = 'flex';
+            document.getElementById('headerNormal').style.display = 'flex'; // Reset display to flex for tabs
+            document.getElementById('navBawah').style.display = 'block';
             
             document.getElementById('platNomor').value = '';
             document.getElementById('areaPencarian').style.display = 'block';
