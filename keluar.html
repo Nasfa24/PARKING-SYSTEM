@@ -138,6 +138,7 @@
 
         <div class="nav-menu" id="navBawah">
             <a href="masuk.html">⬅️ Catat Masuk</a>
+            <a href="#" onclick="logout()" style="color: #d32f2f;">🚪 Keluar Akun</a>
         </div>
     </div>
 
@@ -240,7 +241,6 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Menerima data.data.jenis (pastikan kode.gs klien diperbarui juga)
                     hitungTarif(data.data.waktuMasuk, platNomor, data.data.fotoMasuk, data.data.jenis);
                 } else {
                     tampilkanStatus(`❌ ${data.message}`, 'error');
@@ -264,7 +264,6 @@
         }
 
         function hitungTarif(waktuMasukStr, platNomor, urlFotoMasuk, jenisKendaraanStr) {
-            // Logika Tarif Baru (Membaca dari Super Admin)
             const jenis = jenisKendaraanStr || "Motor"; 
             const isMobil = (jenis === "Mobil");
             
@@ -296,13 +295,16 @@
             globalUrlFotoMasuk = urlFotoMasuk;
             const previewFotoMasuk = document.getElementById('previewFotoMasuk');
             const labelFotoMasuk = document.getElementById('labelFotoMasuk');
+            const btnLihatFoto = document.getElementById('btnLihatFotoMasuk');
+            btnLihatFoto.style.display = 'none';
             
             if (urlFotoMasuk && urlFotoMasuk !== "") {
                 previewFotoMasuk.src = urlFotoMasuk; 
                 previewFotoMasuk.style.display = 'block';
                 labelFotoMasuk.style.display = 'block';
             } else {
-                previewFotoMasuk.style.display = 'none'; labelFotoMasuk.style.display = 'none';
+                previewFotoMasuk.style.display = 'none'; 
+                labelFotoMasuk.style.display = 'none';
             }
 
             document.getElementById('lblJenis').innerText = (isMobil ? "🚗 Mobil" : "🏍️ Motor");
@@ -321,6 +323,11 @@
         function gagalMuatFoto() {
             document.getElementById('previewFotoMasuk').style.display = 'none';
             document.getElementById('labelFotoMasuk').style.display = 'none';
+            const btnLihatFoto = document.getElementById('btnLihatFotoMasuk');
+            if (globalUrlFotoMasuk && globalUrlFotoMasuk !== "") {
+                btnLihatFoto.href = globalUrlFotoMasuk;
+                btnLihatFoto.style.display = 'block';
+            }
         }
 
         function selesaikanParkir() {
@@ -383,6 +390,7 @@
             document.getElementById('previewFotoKeluar').style.display = 'none';
             document.getElementById('previewFotoMasuk').style.display = 'none';
             document.getElementById('labelFotoMasuk').style.display = 'none';
+            document.getElementById('btnLihatFotoMasuk').style.display = 'none';
             document.getElementById('qrisArea').style.display = 'none';
             
             dataTransaksi = {}; fotoKeluarBase64 = ""; globalUrlFotoMasuk = ""; metodePembayaran = "CASH";
@@ -391,6 +399,11 @@
         function tampilkanStatus(pesan, tipe) {
             const box = document.getElementById('statusBox');
             box.innerText = pesan; box.className = tipe; box.style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
         }
     </script>
 </body>

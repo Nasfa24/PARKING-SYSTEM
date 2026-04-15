@@ -81,6 +81,10 @@
                 <span class="karcis-val" id="lblPlat">-</span>
             </div>
             <div class="karcis-item">
+                <span>Jenis Kendaraan:</span>
+                <span class="karcis-val" id="lblJenis">-</span>
+            </div>
+            <div class="karcis-item">
                 <span>Waktu Masuk:</span>
                 <span class="karcis-val" id="lblMasuk">-</span>
             </div>
@@ -99,7 +103,17 @@
     </div>
 
     <script>
-        const apiUrl = "https://script.google.com/macros/s/AKfycbyOAvMp80C5zsqoPe7dpnhGJZlHSmfNcNjJN6zxSB2RuF-wrpzPEi1NnQB99kJ3-AX5Qg/exec";
+        // Mengambil URL API dari Parameter Link (Otomatis menyesuaikan klien)
+        const urlParams = new URLSearchParams(window.location.search);
+        const apiUrl = urlParams.get('api');
+
+        window.onload = function() {
+            if (!apiUrl) {
+                tampilkanStatus('⚠️ URL API tidak valid. Pastikan Anda melakukan Scan dari Spanduk Parkir yang benar.', 'error');
+                document.getElementById('btnCari').disabled = true;
+                document.getElementById('platNomor').disabled = true;
+            }
+        };
 
         function cekKarcis() {
             const platNomor = document.getElementById('platNomor').value.replace(/\s+/g, '').toUpperCase();
@@ -123,7 +137,8 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    tampilkanKarcis(data.data.platNomor, data.data.waktuMasuk, data.data.fotoMasuk);
+                    // Menerima data jenis kendaraan dari backend
+                    tampilkanKarcis(data.data.platNomor, data.data.waktuMasuk, data.data.fotoMasuk, data.data.jenis);
                 } else {
                     tampilkanStatus(`⚠️ Kendaraan tidak ditemukan di area parkir.`, 'error');
                     document.getElementById('karcisArea').style.display = 'none';
@@ -138,9 +153,13 @@
             });
         }
 
-        function tampilkanKarcis(plat, waktuMasuk, urlFotoMasuk) {
+        function tampilkanKarcis(plat, waktuMasuk, urlFotoMasuk, jenisKendaraanStr) {
             document.getElementById('lblPlat').innerText = plat;
             document.getElementById('lblMasuk').innerText = waktuMasuk;
+            
+            // Format Jenis Kendaraan dengan Emoji
+            const jenis = jenisKendaraanStr || "Motor"; 
+            document.getElementById('lblJenis').innerText = (jenis === "Mobil" ? "🚗 Mobil" : "🏍️ Motor");
 
             // Generate QR Code otomatis dari Plat Nomor
             document.getElementById('qrKarcis').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${plat}`;
@@ -165,13 +184,6 @@
             document.getElementById('areaPencarian').style.display = 'none';
             document.getElementById('btnCari').style.display = 'none';
             document.getElementById('karcisArea').style.display = 'block';
-        }
-
-        function tampilkanStatus(pesan, tipe) {
-            const box = document.getElementById('statusBox');
-            box.innerText = pesan;
-            box.className = tipe;
-            box.style.display = 'block';
         }
 
         // Pendaftaran Service Worker PWA
